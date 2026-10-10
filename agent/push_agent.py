@@ -206,12 +206,20 @@ def client():
     return VaaniClient(api_key=key)
 
 
+def get_agent_raw(agent_id: str) -> dict:
+    """Plain GET: vaani-sdk 0.3.1's agents.get() validates against a model that does not match the API response."""
+    key = os.environ.get("VAANI_API_KEY")
+    if not key:
+        raise SystemExit("VAANI_API_KEY is not set (Vaani dashboard > Settings > API Keys)")
+    req = urllib.request.Request(f"https://api.vaanivoice.ai/api/agents/{agent_id}", headers={"X-API-Key": key})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.load(r)
+
+
 def cmd_discover(args) -> None:
-    with client() as c:
-        agent = c.agents.get(args.agent_id)
-        raw = getattr(agent, "raw", None) or agent.__dict__
-        persona = (raw.get("config", raw) or {}).get("persona", {}) if isinstance(raw, dict) else {}
-        print(json.dumps({"actions": persona.get("actions"), "webhook": (raw.get("config", raw) or {}).get("webhook")}, indent=2, default=str))
+    raw = get_agent_raw(args.agent_id)
+    cfg = raw.get("config", raw)
+    print(json.dumps({"actions": (cfg.get("persona") or {}).get("actions"), "webhook": cfg.get("webhook")}, indent=2, default=str))
 
 
 def cmd_apply(args) -> None:
