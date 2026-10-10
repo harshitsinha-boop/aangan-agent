@@ -20,7 +20,7 @@ FAQ pairs and guardrails are also pushed through the API.
 
 ## Running it
 ```bash
-python3 -m venv agent/.venv && agent/.venv/bin/pip install -r agent/requirements.txt
+python3 -m venv agent/.venv && agent/.venv/bin/pip install -r agent/vaani-requirements.txt
 npm run agent:plan                                   # inspect agent/build/*
 agent/.venv/bin/python agent/push_agent.py discover <agent_id>   # after building ONE dummy tool in the Vaani dashboard
 agent/.venv/bin/python agent/push_agent.py apply --create aangan-call-agent --yes   # needs VAANI_API_KEY + deployed app URL
