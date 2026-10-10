@@ -34,7 +34,8 @@ async function LeadDetail({ params }: P) {
       <dl className="grid grid-cols-2 gap-x-6 gap-y-3 rounded-xl border bg-card p-4 text-sm md:grid-cols-4">
         {[['Phone', lead.callers?.phone ?? 'not captured'], ['Email', lead.callers?.email ?? '—'], ['Location', lead.location ?? '—'], ['Project', lead.project_type ?? '—'],
           ['Carpet area', lead.carpet_area_sqft ? `${lead.carpet_area_sqft} sq ft` : '—'], ['Current state', lead.current_state ?? '—'], ['Timeline', lead.timeline ?? '—'],
-          ['Budget (volunteered)', lead.budget_volunteered ?? '—'], ['Source / referrer', lead.source_or_referrer ?? '—'], ['Project value', inr(lead.project_value_inr)]].map(([k, v]) => (
+          ['Budget (volunteered)', lead.budget_volunteered ?? '—'], ['Source / referrer', lead.source_or_referrer ?? '—'], ['Project value', inr(lead.project_value_inr)],
+          ['HubSpot', lead.hubspot_error ? `Sync failed: ${lead.hubspot_error}` : lead.hubspot_deal_id ? `Synced · deal ${lead.hubspot_deal_id}` : 'Not synced']].map(([k, v]) => (
           <div key={k}><dt className="text-xs uppercase tracking-wider text-muted-foreground">{k}</dt><dd className="mt-0.5">{v}</dd></div>
         ))}
       </dl>

@@ -2,6 +2,7 @@ import { ensureCall, upsertCaller } from '@/lib/callers'
 import { classify, type GenerateJson } from '@/lib/classify'
 import { loadConfig, type AppConfig } from '@/lib/config'
 import { isBusinessHours } from '@/lib/hours'
+import { syncLeadToHubspot } from '@/lib/hubspot/sync'
 import { sendHandoffEmail } from '@/lib/notify'
 import { normalizePhone } from '@/lib/phone'
 import type { Db } from '@/lib/supabase/admin'
@@ -148,6 +149,7 @@ export async function ingestCall(db: Db, input: CallData, opts: { generate?: Gen
   const lead = must<{ id: string }>(await db.from('leads').upsert(leadFields, { onConflict: 'call_id' }).select('id').single(), 'upsert lead')
   const handoffId = must<string>(await db.rpc('create_handoff', { p_lead_id: lead.id }), 'create handoff')
   const emailed = await sendHandoffEmail(db, handoffId)
+  await syncLeadToHubspot(db, lead.id) // never throws; failures are recorded on the lead and retried by the cron
   return { callId: call.id, outcome: decision.outcome, leadId: lead.id, handoffId, emailed }
 }
 

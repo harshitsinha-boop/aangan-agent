@@ -16,6 +16,7 @@ const schema = z.object({
   EMAIL_FROM: z.string().default('Aangan Studio <onboarding@resend.dev>'),
   // Test phase: every outgoing email is redirected here (Resend's test sender only delivers to the account owner).
   EMAIL_TEST_REDIRECT: z.email().optional(),
+  HUBSPOT_ACCESS_TOKEN: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().default('gemini-3.8-flash'),
 })

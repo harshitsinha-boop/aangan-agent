@@ -1,6 +1,7 @@
 import { loadConfig, type AppConfig } from '@/lib/config'
 import { env } from '@/lib/env'
 import { businessMinutesBetween } from '@/lib/hours'
+import { runHubspotSync } from '@/lib/hubspot/sync'
 import { sendHandoffEmail, sendHandoffReminder, sendReassignedHandoff } from '@/lib/notify'
 import type { Db } from '@/lib/supabase/admin'
 import { must } from '@/lib/supabase/admin'
@@ -36,7 +37,7 @@ export const fallbackMetadata = (e: { client_name: string | null; project: strin
   callback_minutes: cfg.escalationCallbackMinutes,
 })
 
-export type SlaReport = { fallbackCalls: number; reminders: number; reassigned: number; resent: number; errors: string[] }
+export type SlaReport = { fallbackCalls: number; reminders: number; reassigned: number; resent: number; hubspot?: { synced: number; failed: number }; errors: string[] }
 
 /** Escalation not acknowledged within escalation_ack_minutes -> Vaani places a fallback call to the studio head. */
 export async function runEscalationFallbacks(db: Db, cfg: AppConfig, now: Date, report: SlaReport) {
@@ -115,5 +116,6 @@ export async function runSlaCheck(db: Db, now = new Date()): Promise<SlaReport> 
   await runEscalationFallbacks(db, cfg, now, report)
   await runUnsentHandoffs(db, now, report)
   await runHandoffSla(db, cfg, now, report)
+  report.hubspot = await runHubspotSync(db).catch((e) => { report.errors.push(`hubspot: ${(e as Error).message}`); return undefined })
   return report
 }

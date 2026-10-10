@@ -49,3 +49,8 @@ on conflict do nothing;
 insert into public.config (key, value, note) values
   ('studio_address', '"Aangan Studio, Pune (address to be confirmed)"', 'TODO(Nikhil): studio address shown in caller confirmation emails.')
 on conflict (key) do nothing;
+
+insert into public.config (key, value, note) values
+  ('hubspot', '{"pipeline":"default","stages":{"new":"appointmentscheduled","handed_off":"appointmentscheduled","accepted":"qualifiedtobuy","consult_booked":"presentationscheduled","won":"closedwon","lost":"closedlost"}}',
+   'TODO(HubSpot admin): internal ids of the deal pipeline and stages leads map to. Verify with npm run hubspot:check.')
+on conflict (key) do nothing;

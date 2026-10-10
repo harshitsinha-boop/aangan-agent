@@ -13,7 +13,8 @@
     "agent:knowledge": "python3 agent/knowledge_build.py",
     "eval:classify": "tsx evals/run-classification.ts",
     "eval:leak": "tsx evals/price-leak.ts",
-    "eval": "tsx evals/run-classification.ts --runs 2 && tsx evals/price-leak.ts --runs 3"
+    "eval": "tsx evals/run-classification.ts --runs 2 && tsx evals/price-leak.ts --runs 3",
+    "hubspot:check": "tsx scripts/hubspot-check.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
