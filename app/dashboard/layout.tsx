@@ -13,6 +13,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <nav className="flex gap-4 text-sm text-muted-foreground">
             <Link href="/dashboard" className="hover:text-foreground">Overview</Link>
             <Link href="/dashboard/escalations" className="hover:text-foreground">Escalations</Link>
+            <Link href="/dashboard/components-map" className="hover:text-foreground">Components map</Link>
           </nav>
         </div>
       </header>

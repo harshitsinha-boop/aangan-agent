@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1476 1198" width="1476" height="1198" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5f5f5f"/></marker></defs>
+<rect width="1476" height="1198" fill="#f8f4ed"/>
+<text x="738.0" y="40" text-anchor="middle" font-size="23" font-weight="700" fill="#2b211a">Aangan Studio after-hours call agent · Components Map</text>
+<rect x="168" y="104" width="1284" height="112" fill="#e4e7fb"/>
+<rect x="12.0" y="104" width="156.0" height="112" fill="#5b4a3b"/>
+<text x="90.0" y="158.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Caller</text>
+<text x="90.0" y="176.0" text-anchor="middle" font-size="11" fill="#e8dccf">(User)</text>
+<rect x="168" y="216" width="1284" height="124" fill="#dcf0ee"/>
+<rect x="12.0" y="216" width="156.0" height="124" fill="#5b4a3b"/>
+<text x="90.0" y="276.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Voice platform</text>
+<text x="90.0" y="294.0" text-anchor="middle" font-size="11" fill="#e8dccf">(Vaani)</text>
+<rect x="168" y="340" width="1284" height="218" fill="#fbf1cf"/>
+<rect x="12.0" y="340" width="156.0" height="218" fill="#5b4a3b"/>
+<text x="90.0" y="447.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">System</text>
+<text x="90.0" y="465.0" text-anchor="middle" font-size="11" fill="#e8dccf">(Vercel + Supabase)</text>
+<rect x="168" y="558" width="1284" height="218" fill="#e2f2df"/>
+<rect x="12.0" y="558" width="156.0" height="218" fill="#5b4a3b"/>
+<text x="90.0" y="665.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">AI models</text>
+<text x="90.0" y="683.0" text-anchor="middle" font-size="11" fill="#e8dccf">(LLMs)</text>
+<rect x="168" y="776" width="1284" height="108" fill="#fbe1e6"/>
+<rect x="12.0" y="776" width="156.0" height="108" fill="#5b4a3b"/>
+<text x="90.0" y="828.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Email service</text>
+<text x="90.0" y="846.0" text-anchor="middle" font-size="11" fill="#e8dccf">(Resend)</text>
+<rect x="168" y="884" width="1284" height="108" fill="#f6e4f5"/>
+<rect x="12.0" y="884" width="156.0" height="108" fill="#5b4a3b"/>
+<text x="90.0" y="936.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">CRM</text>
+<text x="90.0" y="954.0" text-anchor="middle" font-size="11" fill="#e8dccf">(HubSpot)</text>
+<rect x="168" y="992" width="1284" height="128" fill="#fde8d6"/>
+<rect x="12.0" y="992" width="156.0" height="128" fill="#5b4a3b"/>
+<text x="90.0" y="1054.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Studio team</text>
+<text x="90.0" y="1072.0" text-anchor="middle" font-size="11" fill="#e8dccf">(Designers, Nikhil)</text>
+<rect x="12.0" y="64" width="1452" height="40" fill="#5b4a3b"/>
+<text x="90.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Actor</text>
+<text x="275.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Trigger</text>
+<text x="489.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Input</text>
+<line x1="382" y1="104" x2="382" y2="1120" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"/>
+<text x="703.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Context</text>
+<line x1="596" y1="104" x2="596" y2="1120" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"/>
+<text x="917.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Processing</text>
+<line x1="810" y1="104" x2="810" y2="1120" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"/>
+<text x="1131.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">AI</text>
+<line x1="1024" y1="104" x2="1024" y2="1120" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"/>
+<text x="1345.0" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Output</text>
+<line x1="1238" y1="104" x2="1238" y2="1120" stroke="#ffffff" stroke-opacity=".7" stroke-width="2"/>
+<path d="M369,160 H382 V278 H395" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M583,278 H596 V278 H609" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M797,278 H810 V394 H823" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M797,394 H810 V394 H823" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M917,436 V454" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1011,496 H1024 V714 H1037" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1225,714 H1238 V394 H1251" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1011,496 H1131 V278 H1251" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1345,436 V788" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1345,872 V896" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<path d="M1345,980 V1014" fill="none" stroke="#5f5f5f" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ah)"/>
+<rect x="181" y="118" width="188" height="84" rx="9" fill="#c9cffa" stroke="#5a63c8" stroke-width="1.6"/>
+<text x="275" y="144" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Calls the studio</text>
+<text x="275" y="162" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">day or night, in English,</text>
+<text x="275" y="180" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">Hindi or Marathi</text>
+<rect x="395" y="236" width="188" height="84" rx="9" fill="#bfe6e1" stroke="#2a8f86" stroke-width="1.6"/>
+<text x="489" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Answers instantly</text>
+<text x="489" y="280" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">says it is Aangan's AI</text>
+<text x="489" y="298" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">assistant; call is recorded</text>
+<rect x="609" y="236" width="188" height="84" rx="9" fill="#bfe6e1" stroke="#2a8f86" stroke-width="1.6"/>
+<text x="703" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Prompt + studio rules</text>
+<text x="703" y="280" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">services, 5-point rubric,</text>
+<text x="703" y="298" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">never speaks a price</text>
+<rect x="609" y="352" width="188" height="84" rx="9" fill="#f6e29a" stroke="#b58a00" stroke-width="1.6"/>
+<text x="703" y="378" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Studio data (Supabase)</text>
+<text x="703" y="396" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">slots, designers, config:</text>
+<text x="703" y="414" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">hours, min weeks, budget</text>
+<rect x="823" y="352" width="188" height="84" rx="9" fill="#f6e29a" stroke="#b58a00" stroke-width="1.6"/>
+<text x="917" y="378" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Live tools (mid-call)</text>
+<text x="917" y="396" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">look up caller, offer slots,</text>
+<text x="917" y="414" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">book (atomic), escalate</text>
+<rect x="823" y="454" width="188" height="84" rx="9" fill="#f6e29a" stroke="#b58a00" stroke-width="1.6"/>
+<text x="917" y="480" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">After the call</text>
+<text x="917" y="498" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">webhook: transcript, cost,</text>
+<text x="917" y="516" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">after-hours, SLA cron (1 min)</text>
+<rect x="1037" y="570" width="188" height="84" rx="9" fill="#c9e8c2" stroke="#3f8f33" stroke-width="1.6"/>
+<text x="1131" y="596" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Agent brain (in Vaani)</text>
+<text x="1131" y="614" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">decides what to say and</text>
+<text x="1131" y="632" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">which tool to call</text>
+<rect x="1037" y="672" width="188" height="84" rx="9" fill="#c9e8c2" stroke="#3f8f33" stroke-width="1.6"/>
+<text x="1131" y="698" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Post-call AI (Gemini)</text>
+<text x="1131" y="716" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">reads transcript for facts;</text>
+<text x="1131" y="734" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">rules decide the outcome</text>
+<rect x="1251" y="236" width="188" height="84" rx="9" fill="#bfe6e1" stroke="#2a8f86" stroke-width="1.6"/>
+<text x="1345" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Fallback alert call</text>
+<text x="1345" y="280" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">to Nikhil if an escalation</text>
+<text x="1345" y="298" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">is not acknowledged in 5 min</text>
+<rect x="1251" y="352" width="188" height="84" rx="9" fill="#f6e29a" stroke="#b58a00" stroke-width="1.6"/>
+<text x="1345" y="378" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Lead + handoff saved</text>
+<text x="1345" y="396" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">designer assigned, signed</text>
+<text x="1345" y="414" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">single-use action links</text>
+<rect x="1251" y="788" width="188" height="84" rx="9" fill="#f7c3cd" stroke="#c2415d" stroke-width="1.6"/>
+<text x="1345" y="814" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">Handoff email</text>
+<text x="1345" y="832" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">Accept / Reassign; booking</text>
+<text x="1345" y="850" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">confirmation; URGENT alert</text>
+<rect x="1251" y="896" width="188" height="84" rx="9" fill="#ecc8ea" stroke="#9a3f95" stroke-width="1.6"/>
+<text x="1345" y="922" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">HubSpot deal</text>
+<text x="1345" y="940" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">contact + summary note;</text>
+<text x="1345" y="958" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">stage follows the lead</text>
+<rect x="1251" y="1014" width="188" height="84" rx="9" fill="#f9d0ae" stroke="#c0661a" stroke-width="1.6"/>
+<text x="1345" y="1040" text-anchor="middle" font-size="13" font-weight="700" fill="#2b211a">One-click accept</text>
+<text x="1345" y="1058" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">dashboard: calls, leads,</text>
+<text x="1345" y="1076" text-anchor="middle" font-size="11.5" font-weight="400" fill="#2b211a">cost vs pipeline</text>
+<text x="12.0" y="1148" font-size="11.5" fill="#6b5d50">Privacy: emails carry a summary and a dashboard link only; the transcript never leaves the system and the phone shows as last 4 digits. Action links change only their own record, once, and expire (72 h / 2 h).</text>
+<text x="12.0" y="1167" font-size="11.5" fill="#6b5d50">Safety: no price, rate or per-sq-ft figure is ever spoken (verified by CI). Escalations skip qualification; unacknowledged ones trigger an outbound call. Dashed arrows = data / control flow.</text>
+</svg>
