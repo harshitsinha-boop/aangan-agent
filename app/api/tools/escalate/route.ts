@@ -12,7 +12,7 @@ import { EscalateBody } from '@/lib/tools/schemas'
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, EscalateBody)
+  const parsed = await parseJson(req, EscalateBody, 'tool:escalate')
   if ('response' in parsed) return parsed.response
   const b = parsed.data
   const phone = normalizePhone(b.phone)

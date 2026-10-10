@@ -7,7 +7,7 @@ import { AvailabilityBody } from '@/lib/tools/schemas'
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, AvailabilityBody)
+  const parsed = await parseJson(req, AvailabilityBody, 'tool:availability')
   if ('response' in parsed) return parsed.response
   const b = parsed.data
   const slots = await findSlots(adminDb(), { visitType: b.visit_type, priority: b.priority, prefer: b.prefer, daysAhead: b.days_ahead, limit: b.limit })

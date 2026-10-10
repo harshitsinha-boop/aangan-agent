@@ -5,6 +5,7 @@ import { json, requireSecret, safeEqual } from '@/lib/http'
 import { ingestCall, isOurOutboundCall, normalizePostprocessing } from '@/lib/ingest'
 import { normalizePhone } from '@/lib/phone'
 import { verifyVaaniSignature } from '@/lib/signatures'
+import { logRequest } from '@/lib/reqlog'
 import { adminDb } from '@/lib/supabase/admin'
 
 export const maxDuration = 60
@@ -29,7 +30,11 @@ export async function POST(req: Request) {
   try { body = JSON.parse(raw) } catch { return json({ error: 'invalid_json' }, 400) }
   const event = body.event
   const db = adminDb()
-  const roomName = (typeof body.room_name === 'string' ? body.room_name : undefined) ?? (typeof body.call_id === 'string' ? body.call_id : undefined)
+  // Vaani documents room_name/call_id at the top level (and under `data` for post-processing); accept either.
+  const inner = typeof body.data === 'object' && body.data !== null ? (body.data as Record<string, unknown>) : {}
+  const pick = (k: string) => (typeof body[k] === 'string' ? (body[k] as string) : typeof inner[k] === 'string' ? (inner[k] as string) : undefined)
+  const roomName = pick('room_name') ?? pick('call_id')
+  await logRequest(db, `webhook:${String(event)}`, 200, body, req.headers, roomName ? undefined : 'no room_name/call_id found')
 
   try {
     if (event === 'call_postprocessing') {

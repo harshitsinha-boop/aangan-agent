@@ -18,7 +18,7 @@ export function requireSecret(req: Request, expected: string): Response | null {
   return null
 }
 
-export async function parseJson<T>(req: Request, schema: ZodType<T>): Promise<{ data: T } | { response: Response }> {
+export async function parseJson<T>(req: Request, schema: ZodType<T>, route?: string): Promise<{ data: T } | { response: Response }> {
   let raw: unknown
   try {
     raw = await req.json()
@@ -31,6 +31,11 @@ export async function parseJson<T>(req: Request, schema: ZodType<T>): Promise<{ 
   }
   const r = schema.safeParse(raw)
   if (!r.success) {
+    if (route) {
+      const { adminDb } = await import('@/lib/supabase/admin')
+      const { logRequest } = await import('@/lib/reqlog')
+      await logRequest(adminDb(), route, 422, raw, req.headers, JSON.stringify(r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message }))).slice(0, 800))
+    }
     return { response: json({ error: 'invalid_input', issues: r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, 422) }
   }
   return { data: r.data }

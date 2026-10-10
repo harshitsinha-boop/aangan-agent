@@ -14,7 +14,7 @@ import { BookBody } from '@/lib/tools/schemas'
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, BookBody)
+  const parsed = await parseJson(req, BookBody, 'tool:book')
   if ('response' in parsed) return parsed.response
   const b = parsed.data
   const phone = normalizePhone(b.phone)

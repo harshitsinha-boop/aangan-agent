@@ -115,6 +115,7 @@ export async function runSlaCheck(db: Db, now = new Date()): Promise<SlaReport> 
   const report: SlaReport = { fallbackCalls: 0, reminders: 0, reassigned: 0, resent: 0, errors: [] }
   await runEscalationFallbacks(db, cfg, now, report)
   await runUnsentHandoffs(db, now, report)
+  await db.from('request_log').delete().lt('at', new Date(now.getTime() - 14 * 86_400_000).toISOString()) // diagnostics retention
   await runHandoffSla(db, cfg, now, report)
   report.hubspot = await runHubspotSync(db).catch((e) => { report.errors.push(`hubspot: ${(e as Error).message}`); return undefined })
   return report

@@ -12,7 +12,7 @@ import { LookupCallerBody } from '@/lib/tools/schemas'
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, LookupCallerBody)
+  const parsed = await parseJson(req, LookupCallerBody, 'tool:lookup-caller')
   if ('response' in parsed) return parsed.response
   const phone = normalizePhone(parsed.data.phone)
   if (!phone) return json({ found: false, recent: false, error: 'invalid_phone' })
