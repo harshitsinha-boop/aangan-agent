@@ -121,16 +121,19 @@ def render_prompt(cfg: dict) -> str:
 
 
 def tool_to_vaani(tool: dict, base_url: str, secret: str) -> dict:
-    """VERIFY: Vaani documents tools as 'paste a cURL request + a natural-language description'. The stored JSON
-    shape is undocumented, so this is the best-effort mapping. Run `discover` against a dashboard-built tool and
-    adjust this one function if the real shape differs."""
-    body_template = {k: f"{{{k}}}" for k in tool["parameters"]["properties"]}
-    curl = (
-        f"curl -X POST '{base_url.rstrip('/')}{tool['path']}' "
-        f"-H 'Content-Type: application/json' -H 'Authorization: Bearer {secret}' "
-        f"-d '{json.dumps(body_template)}'"
-    )
-    return {"name": tool["name"], "description": tool["description"], "curl": curl, "parameters": tool["parameters"]}
+    """Vaani's stored custom-tool layout (learned from a tool created in the dashboard): function_name / description /
+    function_params (JSON schema, with `required`) / agent_config.params {api_endpoint, method, headers, timeout_ms}.
+    The LLM fills function_params; Vaani sends them as the JSON body."""
+    import uuid
+    fid = str(uuid.uuid5(uuid.NAMESPACE_URL, "aangan:" + tool["name"]))
+    return {
+        "id": fid, "function_id": fid, "function_name": tool["name"], "description": tool["description"],
+        "function_params": tool["parameters"], "is_custom": True,
+        "agent_config": {"is_enabled": True, "params": {
+            "api_endpoint": base_url.rstrip("/") + tool["path"], "method": "POST", "timeout_ms": 8000,
+            "headers": {"Authorization": f"Bearer {secret}"}, "query_params": {}, "store_variables": {},
+        }},
+    }
 
 
 def build_payloads(cfg: dict, base_url: str, secret: str) -> dict:
@@ -191,7 +194,7 @@ def cmd_plan(args) -> None:
         (BUILD / f"{k}.json").write_text(json.dumps(v, indent=2, ensure_ascii=False), encoding="utf-8")
     prompt = p["persona"]["identity"]["system_prompt"]
     print(f"config source: {src}  ->  {cfg}")
-    print(f"rendered prompt: {len(prompt)} chars (~{len(prompt)//4} tokens); tools: {[t['name'] for t in p['persona']['actions']['functions']]}")
+    print(f"rendered prompt: {len(prompt)} chars (~{len(prompt)//4} tokens); tools: {[t['function_name'] for t in p['persona']['actions']['functions']]}")
     print(f"wrote {BUILD.relative_to(ROOT)}/ (gitignored)\n\nVERIFY (unconfirmed against Vaani):")
     for v in VERIFY:
         print(f"  - {v}")

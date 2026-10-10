@@ -25,6 +25,10 @@ export async function parseJson<T>(req: Request, schema: ZodType<T>): Promise<{ 
   } catch {
     return { response: json({ error: 'invalid_json' }, 400) }
   }
+  // Voice-agent tool calls routinely send "" or null for "not provided". Treat those as absent.
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    raw = Object.fromEntries(Object.entries(raw as Record<string, unknown>).filter(([, v]) => v !== '' && v !== null && v !== undefined))
+  }
   const r = schema.safeParse(raw)
   if (!r.success) {
     return { response: json({ error: 'invalid_input', issues: r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, 422) }

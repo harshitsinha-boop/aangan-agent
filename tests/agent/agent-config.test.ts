@@ -16,7 +16,7 @@ const PRICING_LEAKS = [/1,?800/, /2,?400\b(?!\s*(sq|square))/, /3,?500/, /1,?200
   /per sq\.? ?ft/i, /₹/, /indicative range/i, /standard specification/i, /luxury specification/i, /premium specification/i]
 
 let prompt: string
-let persona: { identity: { greeting_message: { agent_message: string } }; actions: { functions: { name: string; curl: string }[] } }
+let persona: { identity: { greeting_message: { agent_message: string } }; actions: { functions: { function_name: string; is_custom: boolean; function_params: { required: string[] }; agent_config: { is_enabled: boolean; params: { api_endpoint: string; method: string; timeout_ms: number; headers: Record<string, string> } } }[] } }
 
 beforeAll(() => {
   // `plan` is offline and needs no secrets: it renders exactly what `apply` would push.
@@ -103,6 +103,24 @@ describe('push script safety', () => {
     const secret = 'super-secret-value-that-must-not-leak'
     execFileSync('python3', ['agent/push_agent.py', 'plan'], { cwd: root, env: { ...offlineEnv, VAANI_TOOL_SECRET: secret } })
     expect(read('agent/build/persona.json')).not.toContain(secret)
-    expect(persona.actions.functions[0].curl).toContain('<VAANI_TOOL_SECRET>')
+    expect(persona.actions.functions[0].agent_config.params.headers.Authorization).toBe('Bearer <VAANI_TOOL_SECRET>')
+  })
+})
+
+describe('tool definitions use Vaani\'s real custom-tool format', () => {
+  it('has the four tools, enabled, with short timeouts and the right endpoints', () => {
+    const f = persona.actions.functions
+    expect(f.map((x) => x.function_name).sort()).toEqual(['book_consultation', 'escalate', 'get_availability', 'lookup_caller'])
+    for (const t of f) {
+      expect(t.is_custom).toBe(true)
+      expect(t.agent_config.is_enabled).toBe(true)
+      expect(t.agent_config.params.method).toBe('POST')
+      expect(t.agent_config.params.timeout_ms).toBeLessThanOrEqual(10_000)
+      expect(t.agent_config.params.api_endpoint).toMatch(/^https?:\/\/.+\/api\/tools\//)
+    }
+  })
+  it('only genuinely required parameters are required (so the agent never has to invent values)', () => {
+    const req = Object.fromEntries(persona.actions.functions.map((x) => [x.function_name, [...x.function_params.required].sort()]))
+    expect(req).toEqual({ lookup_caller: ['phone'], get_availability: [], book_consultation: ['phone', 'slot_id'], escalate: ['name', 'phone'] })
   })
 })
