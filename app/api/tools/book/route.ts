@@ -1,5 +1,4 @@
 import { after } from 'next/server'
-import { z } from 'zod'
 import { ensureCall, upsertCaller } from '@/lib/callers'
 import { env } from '@/lib/env'
 import { formatIST } from '@/lib/hours'
@@ -8,28 +7,13 @@ import { sendBookingConfirmation } from '@/lib/notify'
 import { normalizePhone } from '@/lib/phone'
 import { adminDb, must } from '@/lib/supabase/admin'
 import { findSlots } from '@/lib/tools/availability'
-
-const Body = z.object({
-  vaani_call_id: z.string().min(1),
-  phone: z.string().min(5),
-  slot_id: z.uuid(),
-  name: z.string().min(1).max(120).optional(),
-  email: z.email().optional(),
-  project_type: z.string().max(200).optional(),
-  location: z.string().max(200).optional(),
-  carpet_area_sqft: z.number().int().positive().max(200000).optional(),
-  current_state: z.string().max(500).optional(),
-  timeline: z.string().max(200).optional(),
-  budget_volunteered: z.string().max(200).optional(),
-  source_or_referrer: z.string().max(200).optional(),
-  priority: z.boolean().optional(),
-})
+import { BookBody } from '@/lib/tools/schemas'
 
 /** Books a slot for this call. Idempotent on vaani_call_id: a retry returns the same consultation. */
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, Body)
+  const parsed = await parseJson(req, BookBody)
   if ('response' in parsed) return parsed.response
   const b = parsed.data
   const phone = normalizePhone(b.phone)

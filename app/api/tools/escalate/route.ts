@@ -1,26 +1,17 @@
 import { after } from 'next/server'
-import { z } from 'zod'
 import { ensureCall, upsertCaller } from '@/lib/callers'
 import { env } from '@/lib/env'
 import { json, parseJson, requireSecret } from '@/lib/http'
 import { sendEscalationEmails } from '@/lib/notify'
 import { normalizePhone } from '@/lib/phone'
 import { adminDb, must } from '@/lib/supabase/admin'
-
-const Body = z.object({
-  vaani_call_id: z.string().min(1),
-  phone: z.string().min(5),
-  name: z.string().min(1).max(120),
-  project: z.string().max(300).optional(),
-  designer_name: z.string().max(120).optional(),
-  issue: z.string().max(600).optional(),
-})
+import { EscalateBody } from '@/lib/tools/schemas'
 
 /** Existing-client complaint. Idempotent on vaani_call_id: a repeat tool call never re-sends the URGENT email. */
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, Body)
+  const parsed = await parseJson(req, EscalateBody)
   if ('response' in parsed) return parsed.response
   const b = parsed.data
   const phone = normalizePhone(b.phone)

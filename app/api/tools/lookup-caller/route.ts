@@ -1,17 +1,17 @@
-import { z } from 'zod'
 import { ensureCall, upsertCaller } from '@/lib/callers'
+import { loadConfig } from '@/lib/config'
 import { env } from '@/lib/env'
+import { isBusinessHours } from '@/lib/hours'
 import { json, parseJson, requireSecret } from '@/lib/http'
 import { normalizePhone } from '@/lib/phone'
 import { adminDb, must } from '@/lib/supabase/admin'
-
-const Body = z.object({ phone: z.string().min(5), vaani_call_id: z.string().min(1).optional() })
+import { LookupCallerBody } from '@/lib/tools/schemas'
 
 /** Called by the agent at the start of every call. Also links this call to the caller so the post-call webhook knows who rang. */
 export async function POST(req: Request) {
   const denied = requireSecret(req, env().VAANI_TOOL_SECRET)
   if (denied) return denied
-  const parsed = await parseJson(req, Body)
+  const parsed = await parseJson(req, LookupCallerBody)
   if ('response' in parsed) return parsed.response
   const phone = normalizePhone(parsed.data.phone)
   if (!phone) return json({ found: false, recent: false, error: 'invalid_phone' })
@@ -31,7 +31,9 @@ export async function POST(req: Request) {
     await db.from('leads').select('status,project_type,location').eq('caller_id', caller.id).order('created_at', { ascending: false }).limit(3),
     'caller leads',
   )
+  const cfg = await loadConfig(db)
   return json({
+    studio_open_now: isBusinessHours(new Date(), cfg.businessHours),
     caller_known: !!caller.name || previous.length > 0,
     name: caller.name,
     is_existing_client: caller.is_existing_client,
