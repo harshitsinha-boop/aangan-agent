@@ -25,16 +25,26 @@ export async function parseJson<T>(req: Request, schema: ZodType<T>, route?: str
   } catch {
     return { response: json({ error: 'invalid_json' }, 400) }
   }
+  const original = raw
   // Voice-agent tool calls routinely send "" or null for "not provided". Treat those as absent.
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     raw = Object.fromEntries(Object.entries(raw as Record<string, unknown>).filter(([, v]) => v !== '' && v !== null && v !== undefined))
   }
   const r = schema.safeParse(raw)
+  if (route && r.success) {
+    // Record accepted tool calls too (the raw arguments Vaani really sent), without delaying the response.
+    const log = async () => {
+      const { adminDb } = await import('@/lib/supabase/admin')
+      const { logRequest } = await import('@/lib/reqlog')
+      await logRequest(adminDb(), route, 200, original, req.headers, 'accepted')
+    }
+    try { (await import('next/server')).after(log) } catch { await log() }
+  }
   if (!r.success) {
     if (route) {
       const { adminDb } = await import('@/lib/supabase/admin')
       const { logRequest } = await import('@/lib/reqlog')
-      await logRequest(adminDb(), route, 422, raw, req.headers, JSON.stringify(r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message }))).slice(0, 800))
+      await logRequest(adminDb(), route, 422, original, req.headers, JSON.stringify(r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message }))).slice(0, 800))
     }
     return { response: json({ error: 'invalid_input', issues: r.error.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, 422) }
   }

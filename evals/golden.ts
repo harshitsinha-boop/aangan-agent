@@ -5,7 +5,7 @@ import type { Facts } from '../lib/classify'
 
 const ok = { status: 'pass' as const, note: null }
 const base = (o: Partial<Facts>): Facts => ({
-  intent: 'new_lead', language: 'en', caller_hung_up_early: false, caller_name: null, caller_email: null, segment: 'residential',
+  intent: 'new_lead', language: 'en', caller_hung_up_early: false, caller_name: null, caller_email: null, caller_phone: null, segment: 'residential',
   excluded_category: 'none', project_type: null, location: null, carpet_area_sqft: null, current_state: null, timeline_text: null,
   weeks_until_needed: null, budget_text: null, volunteered_total_budget_inr: null, source_or_referrer: null,
   referrer_personally_knows_nikhil: false, complaint_summary: null,

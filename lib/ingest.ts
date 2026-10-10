@@ -14,6 +14,7 @@ export type CallData = {
   transcript: string | null
   summary: string | null
   durationSeconds: number | null
+  durationRaw?: number | null
   phone: string | null
   endedAt: string | null
   recordingUrl: string | null
@@ -27,18 +28,30 @@ const pickPhone = (o: Record<string, unknown> | undefined) => {
 }
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null
 
+/** Vaani documents call_duration as milliseconds in post-processing, but real payloads have carried seconds. Rather than trust
+ *  the docs, pick the reading (seconds or ms) closest to the call's real elapsed time; with no elapsed time, values >= 1000 are ms. */
+export function pickDuration(raw: number | null, elapsedS: number | null): number | null {
+  if (raw === null) return null
+  const asSeconds = raw
+  const asMs = raw / 1000
+  const r1 = (n: number) => Math.round(n * 10) / 10
+  if (elapsedS !== null && elapsedS > 0) return r1(Math.abs(asSeconds - elapsedS) <= Math.abs(asMs - elapsedS) ? asSeconds : asMs)
+  return r1(raw >= 1000 ? asMs : asSeconds)
+}
+
 /** Vaani's `call_postprocessing` payload nests everything under `data`; call_duration is in MILLISECONDS there. */
 export function normalizePostprocessing(body: unknown): CallData | null {
   if (!isObj(body)) return null
   const d = isObj(body.data) ? body.data : body
   const callId = (d.call_id ?? d.room_name ?? body.call_id) as unknown
   if (typeof callId !== 'string' || !callId) return null
-  const ms = typeof d.call_duration === 'number' ? d.call_duration : null
+  const rawDuration = typeof d.call_duration === 'number' ? d.call_duration : null
   return {
     callId,
     transcript: typeof d.transcript === 'string' ? d.transcript : null,
     summary: typeof d.summary === 'string' ? d.summary : null,
-    durationSeconds: ms === null ? null : Math.round(ms / 100) / 10,
+    durationSeconds: pickDuration(rawDuration, null),
+    durationRaw: rawDuration,
     phone: pickPhone(d) ?? pickPhone(isObj(d.entities) ? d.entities : undefined),
     endedAt: typeof body.timestamp === 'string' ? body.timestamp : null,
     recordingUrl: typeof d.recording_url === 'string' ? d.recording_url : null,
@@ -98,11 +111,13 @@ export async function ingestCall(db: Db, input: CallData, opts: { generate?: Gen
   if (input.phone) callerId = (await upsertCaller(db, input.phone)).id
 
   const endedAt = input.endedAt ?? now.toISOString()
-  const startedAt = existing?.started_at ?? (input.durationSeconds !== null ? new Date(new Date(endedAt).getTime() - input.durationSeconds * 1000).toISOString() : null)
+  const elapsedS = existing?.started_at ? (new Date(endedAt).getTime() - new Date(existing.started_at).getTime()) / 1000 : null
+  const durationSeconds = input.durationRaw !== undefined && input.durationRaw !== null ? pickDuration(input.durationRaw, elapsedS) : input.durationSeconds
+  const startedAt = existing?.started_at ?? (durationSeconds !== null ? new Date(new Date(endedAt).getTime() - durationSeconds * 1000).toISOString() : null)
   const afterHours = startedAt ? !isBusinessHours(new Date(startedAt), cfg.businessHours) : false
 
   const common = {
-    caller_id: callerId, started_at: startedAt, ended_at: endedAt, duration_s: input.durationSeconds, after_hours: afterHours,
+    caller_id: callerId, started_at: startedAt, ended_at: endedAt, duration_s: durationSeconds, after_hours: afterHours,
     transcript, summary, raw_payload: input.raw as object,
   }
 
@@ -110,7 +125,7 @@ export async function ingestCall(db: Db, input: CallData, opts: { generate?: Gen
   const alreadyEscalated = existing?.outcome === 'escalated'
   if (!transcript || alreadyEscalated) {
     const call = await ensureCall(db, input.callId, alreadyEscalated ? { ...common, intent: 'complaint', outcome: 'escalated' } : common)
-    if (transcript) await storeCosts(db, call.id, input.durationSeconds, transcript)
+    if (transcript) await storeCosts(db, call.id, durationSeconds, transcript)
     return { callId: call.id, outcome: alreadyEscalated ? 'escalated' : (existing?.outcome ?? null), leadId: null, handoffId: null, emailed: false }
   }
 
@@ -126,14 +141,18 @@ export async function ingestCall(db: Db, input: CallData, opts: { generate?: Gen
     decision.outcome = 'qualified_with_note'
     decision.decline_reason = null
   }
+  // No caller ID (web calls, or the lookup tool could not run): use the number the caller SAID, if any.
+  const spoken = facts.caller_phone ? normalizePhone(facts.caller_phone) : null
+  if (!callerId && spoken) callerId = (await upsertCaller(db, spoken, { name: facts.caller_name, email: facts.caller_email })).id
+  // Our own summary: Vaani's can claim things that never happened (e.g. "scheduled a visit" when no booking was made).
   const call = await ensureCall(db, input.callId, {
-    ...common, language: facts.language, intent: decision.intent, outcome: decision.outcome, decline_reason: decision.decline_reason,
-    summary: summary ?? facts.summary,
+    ...common, caller_id: callerId, language: facts.language, intent: decision.intent, outcome: decision.outcome, decline_reason: decision.decline_reason,
+    summary: facts.summary || summary,
   })
   if (facts.caller_name || facts.caller_email) {
     if (callerId) await db.from('callers').update({ ...(facts.caller_name ? { name: facts.caller_name } : {}), ...(facts.caller_email ? { email: facts.caller_email } : {}) }).eq('id', callerId)
   }
-  await storeCosts(db, call.id, input.durationSeconds, transcript)
+  await storeCosts(db, call.id, durationSeconds, transcript)
 
   if (decision.outcome !== 'qualified' && decision.outcome !== 'qualified_with_note') {
     return { callId: call.id, outcome: decision.outcome, leadId: null, handoffId: null, emailed: false }

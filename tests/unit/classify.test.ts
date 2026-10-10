@@ -4,7 +4,7 @@ import { DEFAULT_CONFIG } from '@/lib/config'
 
 const pass = { status: 'pass' as const, note: null }
 const base = (o: Partial<Facts> = {}): Facts => ({
-  intent: 'new_lead', language: 'en', caller_hung_up_early: false, caller_name: null, caller_email: null, segment: 'residential',
+  intent: 'new_lead', language: 'en', caller_hung_up_early: false, caller_name: null, caller_email: null, caller_phone: null, segment: 'residential',
   excluded_category: 'none', project_type: '3BHK full redesign', location: 'Kothrud', carpet_area_sqft: 1400, current_state: null,
   timeline_text: null, weeks_until_needed: 20, budget_text: null, volunteered_total_budget_inr: null, source_or_referrer: null,
   referrer_personally_knows_nikhil: false, complaint_summary: null,

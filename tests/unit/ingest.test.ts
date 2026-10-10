@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { computeCosts, normalizePostprocessing } from '@/lib/ingest'
+import { computeCosts, normalizePostprocessing, pickDuration } from '@/lib/ingest'
 
 describe('normalizePostprocessing', () => {
   const body = {
@@ -22,3 +22,15 @@ describe('computeCosts', () => {
   })
 })
 
+
+describe('pickDuration: units are not trustworthy, elapsed time decides', () => {
+  it('real call from the Phase-6 test: Vaani sent 149 (seconds) although the docs say ms', () => {
+    expect(pickDuration(149, 148.4)).toBe(149)
+    expect(pickDuration(149_000, 148.4)).toBe(149)
+  })
+  it('without elapsed time: small values are seconds, large values are milliseconds', () => {
+    expect(pickDuration(95, null)).toBe(95)
+    expect(pickDuration(55_150, null)).toBe(55.2)
+    expect(pickDuration(null, 10)).toBeNull()
+  })
+})

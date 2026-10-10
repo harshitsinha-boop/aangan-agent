@@ -13,6 +13,7 @@ export const FactsSchema = z.object({
   caller_hung_up_early: z.boolean(),
   caller_name: z.string().nullable(),
   caller_email: z.string().nullable(),
+  caller_phone: z.string().nullable(),
   segment: z.enum(['residential', 'commercial', 'unknown']),
   excluded_category: z.enum(['none', 'advice_only', 'architecture_structural', 'decor_only', 'furniture_only', 'vastu_only', 'restaurant_hotel_retail_gym', 'other_out_of_scope']),
   project_type: z.string().nullable(),
@@ -134,7 +135,7 @@ Rubric (judge each as pass / unclear / fail):
 5 decision_maker: 'pass' when the caller speaks as the owner/occupant ("my flat", "we bought", books for themselves) or says a spouse/partner has agreed. Use 'unclear' ONLY when the caller says the decision rests with someone else who is not on the call and has not authorised them ("just checking for my parents", "just researching for my in-laws"). Not mentioning authority at all is NOT unclear.
 NOT disqualifying: not knowing what they want, calling after hours, asking about price, single room with full execution, rented flat without structural change.
 excluded_category: use anything other than 'none' ONLY when the caller wants a service the studio does not offer (advice only, architecture or structural work, decor only, furniture only, Vastu only, restaurant/hotel/retail/gym, any other service type). A space being too small or too large is NOT an excluded category: leave it 'none' and just report segment and carpet_area_sqft. caller_hung_up_early is true when the call ended (line dropped, caller left) before the caller described any project. For criteria the caller simply never discussed, use 'unclear' with a short note (never 'fail').
-Rules: extract only what was said. Use null when unknown. NEVER invent numbers. weeks_until_needed = weeks from TODAY until the caller needs the work complete (null if not stated). volunteered_total_budget_inr must be a rupee integer (1 lakh = 100000) and only if the caller said it. If the caller is an existing client complaining about an ongoing project or their designer, intent = complaint. summary: two plain sentences, no pricing talk.`
+Rules: extract only what was said. Use null when unknown. NEVER invent numbers. weeks_until_needed = weeks from TODAY until the caller needs the work complete (null if not stated). volunteered_total_budget_inr must be a rupee integer (1 lakh = 100000) and only if the caller said it. If the caller is an existing client complaining about an ongoing project or their designer, intent = complaint. caller_phone: the caller's own mobile number ONLY if they said it during the call, written as digits (convert spoken digits like "nine eight seven" to numerals); otherwise null. summary: two plain sentences, no pricing talk. NEVER say a visit or consultation was booked, scheduled or confirmed: bookings are recorded separately by the system. Describe what the caller wants and, at most, which times they were offered.`
 
 export const factsJsonSchema = () => z.toJSONSchema(FactsSchema, { target: 'draft-7' })
 
