@@ -17,7 +17,7 @@ const schema = z.object({
   // Test phase: every outgoing email is redirected here (Resend's test sender only delivers to the account owner).
   EMAIL_TEST_REDIRECT: z.email().optional(),
   GEMINI_API_KEY: z.string().optional(),
-  GEMINI_MODEL: z.string().default('gemini-2.5-flash'),
+  GEMINI_MODEL: z.string().default('gemini-3.8-flash'),
 })
 
 export type Env = z.infer<typeof schema>

@@ -1,0 +1,26 @@
+{
+  "$comment": "Expected results from the founder's rubric (qualified.md) and the brief. Only intent/outcome/decline_reason are hard requirements; priority is checked where the brief defines it (referral from someone who knows Nikhil, residential 3,000+ sq ft).",
+  "cases": {
+    "T01": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Referral from a past client (not Nikhil's friend), 3BHK Kothrud, March, owner + spouse authorises" },
+    "T02": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Asked for price: never disqualifies. Move-in Nov: ~8+ weeks" },
+    "T03": { "intent": "new_lead", "outcome": "declined", "decline_reason": "area", "why": "Nashik" },
+    "T04": { "intent": "new_lead", "outcome": "declined", "decline_reason": "advice_only", "why": "Ideas and suggestions, no execution" },
+    "T05": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": true, "why": "Close friend of Nikhil -> priority" },
+    "T06": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "800 sq ft office in Baner, founder, December" },
+    "T07": { "intent": "new_lead", "outcome": "declined", "decline_reason": "timeline", "why": "Before Diwali, about 3 weeks" },
+    "T09": { "intent": "complaint", "outcome": "escalated", "decline_reason": null, "why": "Existing client, designer silent" },
+    "T10": { "intent": "new_lead", "outcome": "declined", "decline_reason": "budget", "why": "Volunteered 1-1.5 lakh for kitchen + bedroom" },
+    "T11": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Rented flat, no structural change: allowed" },
+    "T12": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": true, "why": "5,500 sq ft villa -> priority" },
+    "T13": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Pushed twice for price; deflected; booked" },
+    "T14": { "intent": "new_lead", "outcome": "qualified_with_note", "decline_reason": null, "priority": false, "why": "Caller is the son doing initial checking; parents decide" },
+    "T15": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Possession in 6 weeks is not a completion deadline; design first" },
+    "T16": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "New enquiry, follow-up failure; frustrated but a valid lead" },
+    "T17a": { "intent": "other", "outcome": "abandoned", "decline_reason": null, "why": "Line dropped after one sentence" },
+    "T17b": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Repeat caller after drop, Pimple Saudagar 3BHK" },
+    "T18": { "intent": "new_lead", "outcome": "declined", "decline_reason": "too_small", "why": "180 sq ft commercial pod (config commercial_min_sqft = 500)" },
+    "T19": { "intent": "new_lead", "outcome": "declined", "decline_reason": "out_of_scope", "why": "Restaurant" },
+    "T20": { "intent": "new_lead", "outcome": "qualified", "decline_reason": null, "priority": false, "why": "Magarpatta 2BHK, January execution" }
+  },
+  "missed": { "T08": { "why": "Missed call 10:47pm: not a classifier case; used to test the after-hours path (answer_mode all_calls, after_hours = true)" } }
+}

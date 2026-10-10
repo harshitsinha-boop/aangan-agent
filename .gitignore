@@ -50,3 +50,4 @@ agent/build/
 __pycache__/
 .venv/
 emails/preview/
+evals/report/

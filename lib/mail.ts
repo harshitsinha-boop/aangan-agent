@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { env } from '@/lib/env'
+import { z } from 'zod'
 
 export type Mail = {
   to: string
@@ -13,10 +13,16 @@ export interface Mailer {
   send(m: Mail): Promise<{ id: string | null }>
 }
 
+const mailEnv = () =>
+  z.object({
+    RESEND_API_KEY: z.string().min(1, 'RESEND_API_KEY is not set'),
+    EMAIL_FROM: z.string().default('Aangan Studio <onboarding@resend.dev>'),
+    EMAIL_TEST_REDIRECT: z.email().optional(),
+  }).parse(process.env)
+
 class ResendMailer implements Mailer {
   async send(m: Mail) {
-    const e = env()
-    if (!e.RESEND_API_KEY) throw new Error('RESEND_API_KEY is not set')
+    const e = mailEnv() // only what sending needs; unrelated secrets (Supabase etc.) are not required
     // Test phase: redirect everything to one inbox; keep the real recipient visible in the subject.
     const to = e.EMAIL_TEST_REDIRECT ?? m.to
     const subject = e.EMAIL_TEST_REDIRECT && e.EMAIL_TEST_REDIRECT !== m.to ? `[to: ${m.to}] ${m.subject}` : m.subject

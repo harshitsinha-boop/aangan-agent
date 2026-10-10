@@ -65,6 +65,30 @@ describe('decide(): outcomes from the founder rubric', () => {
     expect(decide(base({ volunteered_total_budget_inr: 900000, rubric: { ...base().rubric, budget: { status: 'fail', note: 'model slip' } } }), cfg).outcome).toBe('qualified'))
 })
 
+describe('decide(): rules added from the live eval (Phase 6)', () => {
+  const unclear = { status: 'unclear' as const, note: 'not discussed' }
+  it('a "new enquiry" with no substance (line dropped) is abandoned, not forwarded as a lead', () => {
+    const d = decide(base({ project_type: null, location: null, carpet_area_sqft: null, caller_hung_up_early: true,
+      rubric: { real_project: unclear, service_area: unclear, timeline: unclear, budget: pass, decision_maker: unclear } }), cfg)
+    expect(d).toMatchObject({ intent: 'other', outcome: 'abandoned', decline_reason: null })
+  })
+  it('but a caller who said where/what is a lead even if timeline was never discussed (T11/T16)', () => {
+    const d = decide(base({ rubric: { ...base().rubric, timeline: unclear } }), cfg)
+    expect(d.outcome).toBe('qualified')
+    expect(d.uncertainty_notes).toMatch(/timeline/) // the gap is still shown to the designer
+  })
+  it('only an unclear criterion 4 or 5 yields "qualified with note"', () => {
+    expect(decide(base({ rubric: { ...base().rubric, budget: unclear } }), cfg).outcome).toBe('qualified_with_note')
+    expect(decide(base({ rubric: { ...base().rubric, decision_maker: unclear } }), cfg).outcome).toBe('qualified_with_note')
+    expect(decide(base({ rubric: { ...base().rubric, real_project: unclear } }), cfg).outcome).toBe('qualified')
+  })
+  it('too-small commercial is a SIZE decline even when the model also tagged it generically out of scope (T18)', () =>
+    expect(decide(base({ segment: 'commercial', carpet_area_sqft: 180, excluded_category: 'other_out_of_scope' }), cfg))
+      .toMatchObject({ outcome: 'declined', decline_reason: 'too_small' }))
+  it('a genuinely excluded service is still out_of_scope, not a size reason', () =>
+    expect(decide(base({ segment: 'commercial', carpet_area_sqft: 2500, excluded_category: 'restaurant_hotel_retail_gym' }), cfg).decline_reason).toBe('out_of_scope'))
+})
+
 describe('classify() with an injected model', () => {
   it('validates the model output against the schema', async () => {
     await expect(classify('x', cfg, new Date(), async () => ({ intent: 'new_lead' }))).rejects.toThrow()

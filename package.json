@@ -10,7 +10,10 @@
     "test": "vitest run --passWithNoTests",
     "typecheck": "next typegen && tsc --noEmit",
     "agent:plan": "python3 agent/push_agent.py plan",
-    "agent:knowledge": "python3 agent/knowledge_build.py"
+    "agent:knowledge": "python3 agent/knowledge_build.py",
+    "eval:classify": "tsx evals/run-classification.ts",
+    "eval:leak": "tsx evals/price-leak.ts",
+    "eval": "tsx evals/run-classification.ts --runs 2 && tsx evals/price-leak.ts --runs 3"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
