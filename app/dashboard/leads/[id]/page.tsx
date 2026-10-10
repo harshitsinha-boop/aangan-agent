@@ -1,25 +1,25 @@
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { BackLink, istTime, Section } from '@/components/dashboard/ui'
 import { Skeleton } from '@/components/ui/skeleton'
-import { requireAdmin } from '@/lib/auth'
+import { dashboardDb } from '@/lib/dashboard/db'
 import { inr } from '@/lib/dashboard/format'
 import { must } from '@/lib/supabase/admin'
-import { updateLead } from './actions'
 
-type P = { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> }
+type P = { params: Promise<{ id: string }> }
 export default function Page(p: P) {
   return <Suspense fallback={<Skeleton className="h-96 rounded-xl" />}><LeadDetail {...p} /></Suspense>
 }
 
 const CRITERIA: Record<string, string> = { real_project: 'Real project with execution', service_area: 'In service area', timeline: 'Realistic timeline', budget: 'Budget broadly aligned', decision_maker: 'Decision-maker' }
 
-async function LeadDetail({ params, searchParams }: P) {
+async function LeadDetail({ params }: P) {
+  await connection() // live data: never prerender at build time
   const { id } = await params
-  const sp = await searchParams
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
-  const { db } = await requireAdmin()
+  const db = dashboardDb()
   const lead = must(await db.from('leads').select('*, callers(name,phone,email), calls(id,summary,after_hours,started_at,created_at), consultations(slot_start,visit_type,status,designers(name)), handoffs(sent_at,delivered_at,opened_at,accepted_at,reminder_sent_at,reassigned_at,designers(name))').eq('id', id).maybeSingle(), 'lead')
   if (!lead) notFound()
   const verdict = (lead.rubric_verdict ?? {}) as Record<string, { status: string; note?: string }>
@@ -70,19 +70,11 @@ async function LeadDetail({ params, searchParams }: P) {
       <Section title="Call summary"><p className="max-w-3xl leading-relaxed">{lead.calls?.summary ?? 'No summary yet.'}</p>
         {lead.calls?.id && <Link className="text-sm underline underline-offset-4" href={`/dashboard/calls/${lead.calls.id}`}>Open call and transcript →</Link>}
       </Section>
-      <Section title="Outcome" note="Feeds conversion and pipeline figures">
-        <form action={updateLead} className="flex max-w-xl flex-wrap items-end gap-3 rounded-xl border bg-card p-4 text-sm">
-          <input type="hidden" name="id" value={lead.id} />
-          <label className="space-y-1"><span className="block text-xs uppercase tracking-wider text-muted-foreground">Status</span>
-            <select name="status" defaultValue={lead.status} className="rounded-md border bg-background px-2 py-1.5">
-              {['new', 'handed_off', 'accepted', 'consult_booked', 'won', 'lost'].map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-            </select></label>
-          <label className="space-y-1"><span className="block text-xs uppercase tracking-wider text-muted-foreground">Project value (₹)</span>
-            <input name="value" inputMode="numeric" defaultValue={lead.project_value_inr ?? ''} placeholder="e.g. 850000" className="w-40 rounded-md border bg-background px-2 py-1.5" /></label>
-          <button className="rounded-md bg-primary px-4 py-1.5 text-primary-foreground">Save</button>
-          {sp.saved && <span role="status" className="text-[var(--good)]">Saved</span>}
-          {sp.error && <span role="alert" className="text-[var(--bad)]">Could not save: check the values.</span>}
-        </form>
+      <Section title="Outcome" note="Read-only while the dashboard is open to everyone">
+        <p className="text-sm text-muted-foreground">
+          Status and project value feed the conversion and pipeline figures. Update them in Supabase (table <code>leads</code>, columns
+          <code> status</code> and <code>project_value_inr</code>) until the dashboard is protected again.
+        </p>
       </Section>
     </div>
   )

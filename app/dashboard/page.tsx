@@ -6,7 +6,7 @@ import { Hero } from '@/components/dashboard/hero'
 import { Bars, istTime, OutcomeBadge, OutcomeSplit, Section, Stat } from '@/components/dashboard/ui'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { requireAdmin } from '@/lib/auth'
+import { dashboardDb } from '@/lib/dashboard/db'
 import { DECLINE_LABELS, inr, inr2, inrCompact, minutes, pct, seconds } from '@/lib/dashboard/format'
 import { getHeadline, getMetrics, parseFilters, recentBounces, recentCalls, recentLeads } from '@/lib/dashboard/queries'
 
@@ -26,7 +26,7 @@ const COMPONENT_LABELS: Record<string, string> = {
 
 async function Overview({ searchParams }: { searchParams: SP }) {
   await connection() // time-relative (this month / last 14 days): always render at request time
-  const { db } = await requireAdmin()
+  const db = dashboardDb()
   const f = parseFilters(await searchParams)
   const [m, headline, calls, leads, bounces] = await Promise.all([
     getMetrics(db, f), getHeadline(db), recentCalls(db, f), recentLeads(db, f), recentBounces(db),

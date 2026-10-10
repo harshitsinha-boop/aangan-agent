@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "agent:plan": "python3 agent/push_agent.py plan",
     "agent:knowledge": "python3 agent/knowledge_build.py"
   },

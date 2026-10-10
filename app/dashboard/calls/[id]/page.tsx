@@ -1,9 +1,10 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { BackLink, istTime, OutcomeBadge, Section } from '@/components/dashboard/ui'
 import { Skeleton } from '@/components/ui/skeleton'
-import { requireAdmin } from '@/lib/auth'
+import { dashboardDb } from '@/lib/dashboard/db'
 import { DECLINE_LABELS, inr2, seconds } from '@/lib/dashboard/format'
 import { must } from '@/lib/supabase/admin'
 
@@ -20,9 +21,10 @@ function turns(t: string) {
 }
 
 async function CallDetail({ params }: { params: Promise<{ id: string }> }) {
+  await connection() // live data: never prerender at build time
   const { id } = await params
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound()
-  const { db } = await requireAdmin()
+  const db = dashboardDb()
   const call = must(await db.from('calls').select('*, callers(name,phone,email,is_existing_client), leads(id), escalations(id,acknowledged_by,acknowledged_at,fallback_call_at), call_costs(component,units,inr)').eq('id', id).maybeSingle(), 'call')
   if (!call) notFound()
   const lead = Array.isArray(call.leads) ? call.leads[0] : call.leads

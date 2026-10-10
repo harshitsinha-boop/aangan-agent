@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { signOut } from '@/app/login/actions'
 
 export const metadata: Metadata = { title: 'Dashboard · Aangan Studio', robots: { index: false, follow: false } }
 
@@ -15,7 +14,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Link href="/dashboard" className="hover:text-foreground">Overview</Link>
             <Link href="/dashboard/escalations" className="hover:text-foreground">Escalations</Link>
           </nav>
-          <form action={signOut} className="ml-auto"><button className="text-sm text-muted-foreground hover:text-foreground">Sign out</button></form>
         </div>
       </header>
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-6">{children}</main>

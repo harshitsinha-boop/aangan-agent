@@ -1,8 +1,9 @@
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import { BackLink, istTime, Section } from '@/components/dashboard/ui'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { requireAdmin } from '@/lib/auth'
+import { dashboardDb } from '@/lib/dashboard/db'
 import { minutes } from '@/lib/dashboard/format'
 import { must } from '@/lib/supabase/admin'
 import Link from 'next/link'
@@ -12,7 +13,8 @@ export default function Page() {
 }
 
 async function Escalations() {
-  const { db } = await requireAdmin()
+  await connection() // live data: never prerender at build time
+  const db = dashboardDb()
   const rows = must<any[]>(await db.from('escalations').select('*').order('created_at', { ascending: false }).limit(50), 'escalations') // eslint-disable-line @typescript-eslint/no-explicit-any
   return (
     <div className="space-y-6">

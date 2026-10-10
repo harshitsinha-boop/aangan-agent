@@ -12,7 +12,7 @@ jobs:
         with: { node-version: 24, cache: npm }
       - run: npm ci
       - run: npm run lint
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
       - name: Knowledge files are up to date with context-source
         run: python3 agent/knowledge_build.py && git diff --exit-code agent/knowledge
       - run: npm test
