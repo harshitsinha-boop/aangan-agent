@@ -5,6 +5,7 @@ import { json, parseJson, requireSecret } from '@/lib/http'
 import { sendEscalationEmails } from '@/lib/notify'
 import { normalizePhone } from '@/lib/phone'
 import { adminDb, must } from '@/lib/supabase/admin'
+import { resolveCallKey } from '@/lib/tools/callkey'
 import { EscalateBody } from '@/lib/tools/schemas'
 
 /** Existing-client complaint. Idempotent on vaani_call_id: a repeat tool call never re-sends the URGENT email. */
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
 
   const db = adminDb()
   const caller = await upsertCaller(db, phone, { name: b.name, is_existing_client: true })
-  const call = await ensureCall(db, b.vaani_call_id, { caller_id: caller.id, intent: 'complaint', outcome: 'escalated' })
+  const call = await ensureCall(db, await resolveCallKey(db, b.vaani_call_id, phone), { caller_id: caller.id, intent: 'complaint', outcome: 'escalated' })
 
   const prior = must<{ id: string } | null>(await db.from('escalations').select('id').eq('call_id', call.id).maybeSingle(), 'find escalation')
   if (prior) return json({ ok: true, escalation_id: prior.id, duplicate: true })

@@ -13,7 +13,7 @@ export const AvailabilityBody = z.object({
 })
 
 export const BookBody = z.object({
-  vaani_call_id: z.string().min(1),
+  vaani_call_id: z.string().min(1).optional(),
   phone: z.string().min(5),
   slot_id: z.uuid(),
   name: z.string().min(1).max(120).optional(),
@@ -29,7 +29,7 @@ export const BookBody = z.object({
 })
 
 export const EscalateBody = z.object({
-  vaani_call_id: z.string().min(1),
+  vaani_call_id: z.string().min(1).optional(),
   phone: z.string().min(5),
   name: z.string().min(1).max(120),
   project: z.string().max(300).optional(),

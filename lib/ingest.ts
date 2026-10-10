@@ -80,6 +80,15 @@ export async function ingestCall(db: Db, input: CallData, opts: { generate?: Gen
     summary = summary ?? (det.summary && !/not available/i.test(det.summary) ? det.summary : null)
   }
 
+  // If Vaani gave the tools no call id, bookings/escalations were filed under 'tool-<phone>-<epoch>': fold them into this call.
+  let adoptPhone = input.phone
+  if (!adoptPhone) {
+    const known = must<{ callers: { phone: string } | null } | null>(
+      await db.from('calls').select('callers(phone)').eq('vaani_call_id', input.callId).maybeSingle(), 'find caller phone')
+    adoptPhone = known?.callers?.phone ?? null
+  }
+  await db.rpc('adopt_tool_call', { p_real: input.callId, p_phone: adoptPhone })
+
   const existing = must<{ id: string; caller_id: string | null; outcome: string | null; started_at: string | null; intent: string | null } | null>(
     await db.from('calls').select('id,caller_id,outcome,started_at,intent').eq('vaani_call_id', input.callId).maybeSingle(),
     'find call',

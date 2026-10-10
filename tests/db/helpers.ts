@@ -19,7 +19,7 @@ export async function makeDb(opts: { seed?: boolean } = {}) {
     alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
     alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
   `)
-  for (const m of ['01_schema', '02_rls', '04_rls_hardening', '06_handoff_functions', '07_dashboard_metrics']) {
+  for (const m of ['01_schema', '02_rls', '04_rls_hardening', '06_handoff_functions', '07_dashboard_metrics', '09_adopt_tool_call']) {
     const n = m.slice(0, 2)
     await db.exec(sql(`migrations/202610100000${n}_${m.slice(3)}.sql`))
   }

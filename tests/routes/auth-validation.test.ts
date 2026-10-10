@@ -23,11 +23,11 @@ describe.each([
 })
 
 describe('input validation (zod) happens before any database access', () => {
-  it('book rejects a non-uuid slot and missing call id', async () => {
+  it('book rejects a non-uuid slot', async () => {
     const r = await book(req({ phone: '9876543210', slot_id: 'not-a-uuid' }, tool))
     expect(r.status).toBe(422)
     const j = await r.json()
-    expect(j.issues.map((i: { path: string }) => i.path)).toEqual(expect.arrayContaining(['vaani_call_id', 'slot_id']))
+    expect(j.issues.map((i: { path: string }) => i.path)).toEqual(expect.arrayContaining(['slot_id']))
   })
   it('book rejects a bad email', async () =>
     expect((await book(req({ vaani_call_id: 'c', phone: '9876543210', slot_id: crypto.randomUUID(), email: 'nope' }, tool))).status).toBe(422))

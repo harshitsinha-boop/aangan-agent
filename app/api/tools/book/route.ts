@@ -7,6 +7,7 @@ import { sendBookingConfirmation } from '@/lib/notify'
 import { normalizePhone } from '@/lib/phone'
 import { adminDb, must } from '@/lib/supabase/admin'
 import { findSlots } from '@/lib/tools/availability'
+import { resolveCallKey } from '@/lib/tools/callkey'
 import { BookBody } from '@/lib/tools/schemas'
 
 /** Books a slot for this call. Idempotent on vaani_call_id: a retry returns the same consultation. */
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
 
   const db = adminDb()
   const caller = await upsertCaller(db, phone, { name: b.name, email: b.email })
-  const call = await ensureCall(db, b.vaani_call_id, { caller_id: caller.id })
+  const call = await ensureCall(db, await resolveCallKey(db, b.vaani_call_id, phone), { caller_id: caller.id })
 
   // Draft lead for this call; the post-call ingest completes it. Booking = the agent qualified the caller.
   const draft: Record<string, unknown> = { call_id: call.id, caller_id: caller.id }
