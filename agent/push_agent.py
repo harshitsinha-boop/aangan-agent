@@ -5,6 +5,7 @@
   python agent/push_agent.py discover <agent_id>        # print an existing agent's tools (learn Vaani's tool JSON shape)
   python agent/push_agent.py apply --agent-id <id> --yes
   python agent/push_agent.py apply --create "aangan-call-agent" --yes
+  python agent/push_agent.py alert --create "aangan-alert-agent" --yes   # outbound escalation-fallback agent (VAANI_ALERT_AGENT_ID)
 
 Secrets are read from the environment / .env.local (VAANI_API_KEY, VAANI_TOOL_SECRET, NEXT_PUBLIC_APP_URL,
 optionally SUPABASE service key to read the live `config` table). Nothing secret is written to agent/build/ unless
@@ -237,6 +238,27 @@ def cmd_apply(args) -> None:
         print("NOT pushed: inbound phone number (paid, dashboard), webhook registration (dashboard), voice choice (Voice Lab).")
 
 
+def cmd_alert(args) -> None:
+    """Create/update the small outbound agent that phones the studio head when an escalation is not acknowledged."""
+    if not args.yes:
+        raise SystemExit("refusing to push without --yes")
+    prompt = (AGENT / "alert-agent-prompt.md").read_text(encoding="utf-8").split("-->", 1)[1].strip()
+    greeting = (AGENT / "alert-greeting.txt").read_text(encoding="utf-8").strip()
+    persona = {
+        "identity": {"system_prompt": prompt, "greeting_message": {"agent_message": greeting, "interruptible": False, "let_user_speak_first": False}},
+        "senses_capabilities": {"language": "en", "auto_detect": True},
+    }
+    with client() as c:
+        agent_id = args.agent_id
+        if args.create:
+            agent_id = c.create_agent(agent_display_name=args.create, config={"persona": persona}).agent_id
+            print(f"created alert agent {agent_id}; set VAANI_ALERT_AGENT_ID={agent_id} (Vercel + .env.local)")
+        elif not agent_id:
+            raise SystemExit("pass --agent-id or --create <name>")
+        c.update_agent_persona(agent_id, persona=persona)
+        print(f"pushed alert persona to {agent_id}")
+
+
 def main() -> None:
     load_env()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -244,6 +266,7 @@ def main() -> None:
     sub.add_parser("plan").set_defaults(fn=cmd_plan)
     d = sub.add_parser("discover"); d.add_argument("agent_id"); d.set_defaults(fn=cmd_discover)
     a = sub.add_parser("apply"); a.add_argument("--agent-id"); a.add_argument("--create"); a.add_argument("--yes", action="store_true"); a.set_defaults(fn=cmd_apply)
+    al = sub.add_parser("alert"); al.add_argument("--agent-id"); al.add_argument("--create"); al.add_argument("--yes", action="store_true"); al.set_defaults(fn=cmd_alert)
     args = ap.parse_args()
     args.fn(args)
 

@@ -66,7 +66,7 @@ export async function sendHandoffEmail(db: Db, handoffId: string): Promise<boole
   try {
     const cfg = await loadConfig(db)
     const b = await buildHandoff(db, handoffId, cfg.handoffTokenHours)
-    const m = handoffEmail(b.data)
+    const m = await handoffEmail(b.data)
     const { id } = await getMailer().send({ to: b.to, ...m, tags: { kind: 'handoff' } })
     await db.from('handoffs').update({ email_message_id: id }).eq('id', handoffId)
     await recordSent(db, id, 'handoff')
@@ -88,7 +88,7 @@ export async function sendHandoffReminder(db: Db, handoffId: string, hoursWaitin
   try {
     const cfg = await loadConfig(db)
     const b = await buildHandoff(db, handoffId, cfg.handoffTokenHours)
-    const m = reminderEmail({ ...b.data, hoursWaiting })
+    const m = await reminderEmail({ ...b.data, hoursWaiting })
     const { id } = await getMailer().send({ to: b.to, ...m, urgent: true, tags: { kind: 'handoff_reminder' } })
     await recordSent(db, id, 'handoff_reminder')
     return true
@@ -113,7 +113,7 @@ export async function sendEscalationEmails(db: Db, escalationId: string): Promis
   for (const p of people) {
     try {
       const tok = await mintToken(db, { action: 'acknowledge', targetTable: 'escalations', targetId: escalationId, recipient: p.email, ttlHours: cfg.escalationTokenHours })
-      const m = escalationEmail({
+      const m = await escalationEmail({
         name: esc.client_name, project: esc.project, designer: esc.designer_name, issue: esc.issue_summary,
         calledAt: formatIST(esc.calls?.started_at ?? esc.created_at), callbackMinutes: cfg.escalationCallbackMinutes,
         acknowledgeUrl: actionUrl(tok), dashboardUrl: dash('/escalations'),
@@ -137,7 +137,7 @@ export async function sendBookingConfirmation(db: Db, consultationId: string): P
   const caller = c.leads?.callers
   if (!caller?.email) return false
   const cfg = await loadConfig(db)
-  const m = confirmationEmail({
+  const m = await confirmationEmail({
     name: caller.name, when: formatIST(c.slot_start), visitType: c.visit_type,
     designerFirstName: String(c.designers?.name ?? 'Your designer').split(' ')[0], studioAddress: cfg.studioAddress,
   })

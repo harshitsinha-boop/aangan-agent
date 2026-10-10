@@ -1,0 +1,1 @@
+Hello, this is Aangan Studio's alert assistant. An existing client, {client_name}, called about their project, {project}, and needs a callback within {callback_minutes} minutes.

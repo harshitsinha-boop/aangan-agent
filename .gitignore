@@ -49,3 +49,4 @@ context-source/pricing.md
 agent/build/
 __pycache__/
 .venv/
+emails/preview/
