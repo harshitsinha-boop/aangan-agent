@@ -97,4 +97,4 @@ for k, t in enumerate([
     o.append(f'<text x="{PAD/2}" y="{foot+k*19}" font-size="11.5" fill="#6b5d50">{escape(t)}</text>')
 o.append("</svg>")
 Path(__file__).resolve().parent.parent.joinpath("public", "components-map.svg").write_text("\n".join(o), encoding="utf-8")
-print(f"wrote public/components-map.svg ({W}x{H})")
+print(f"wrote public/components-map.svg ({W}x{H}); re-export the PNG with headless Chrome (see docs/DASHBOARD.md)")

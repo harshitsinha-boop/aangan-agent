@@ -38,3 +38,7 @@ the brief, and every required fix: client-only via `next/dynamic` (`force-field-
 no per-point allocation, debounced `ResizeObserver` on the container, <=12,000 points, `IntersectionObserver` +
 `visibilitychange` pause, static gradient for reduced-motion and touch-only devices, `aria-hidden`, restyled loading/error states, no
 demo controls. Tune it in `lib/brand/particles.ts` (`brandParticles`). `public/brand/hero.jpg` is a generated placeholder: replace it with a real photograph.
+
+## Components map
+`/dashboard/components-map` shows the swimlane map of the system. Source: `scripts/build-components-map.py` -> `public/components-map.svg`.
+PNG export (2x): `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --force-device-scale-factor=2 --window-size=1476,1198 --screenshot=public/components-map.png <html file embedding the svg>`.

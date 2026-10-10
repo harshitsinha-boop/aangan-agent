@@ -11,7 +11,10 @@ export default function ComponentsMapPage() {
           <h1 className="text-xl font-semibold">Components map</h1>
           <p className="text-sm text-muted-foreground">Who does what, from the caller&apos;s first ring to the designer&apos;s one-click accept. Scroll sideways on a phone.</p>
         </div>
-        <Link href="/components-map.svg" target="_blank" className="text-sm underline underline-offset-4">Open full size / save</Link>
+        <div className="flex gap-4 text-sm">
+          <a href="/components-map.png" download="aangan-components-map.png" className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground">Download image (PNG)</a>
+          <Link href="/components-map.svg" target="_blank" className="self-center underline underline-offset-4">SVG</Link>
+        </div>
       </div>
       <div className="overflow-x-auto rounded-xl border bg-card p-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
